@@ -1,0 +1,46 @@
+/* Font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Open+Sans&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom right, #1b3c2e, #294834);
+  color: #f4f4f4;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 700px;
+  margin: 5vh auto;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: #e6ffe6;
+  margin-bottom: 0.5rem;
+}
+
+.intro {
+  font-style: italic;
+  color: #b9dbc4;
+  margin-bottom: 2rem;
+}
+
+.letter p {
+  margin: 1.2rem 0;
+}
+
+.signoff {
+  margin-top: 2rem;
+  font-weight: bold;
+  color: #d1ffd1;
+  font-family: 'Playfair Display', serif;
+}
