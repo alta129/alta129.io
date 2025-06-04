@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ri Runner 🌲</title>
 
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
 
-  <!--────────── Forest Theme ──────────-->
   <style>
     :root {
       --bg: #0a1a0a;
@@ -322,29 +320,22 @@
   </div>
 
 <script>
-/********************************************
- *  super-light runner, inspired by T-Rex   *
- *  primeinspire tutorial + forest vibes    *
- *******************************************/
 const canvas = document.getElementById('gameCanvas');
 const ctx     = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 
-// physics
-const GROUND_Y   = 320;          // adjusted for larger screen
-const GRAVITY    = 0.3;          // reduced gravity for higher jumps
-const JUMP_VEL   = -12;          // increased jump velocity for higher jumps
+const GROUND_Y   = 320;
+const GRAVITY    = 0.3;
+const JUMP_VEL   = -12;
 const FPS        = 60;
-let   speed      = 4;            // keep current speed
-let   accel      = 0.00005;      // keep current acceleration
+let   speed      = 4;
+let   accel      = 0.00005;
 let   frameId;
 let   highScore  = localStorage.getItem('highScore') || 0;
 
-// game state
 let gameStarted = false;
 let gameOver = false;
 
-// background elements
 const trees = [];
 const clouds = [];
 const birds = [];
@@ -352,21 +343,18 @@ const TREE_COUNT = 8;
 const CLOUD_COUNT = 4;
 const BIRD_COUNT = 3;
 
-// Update character unlock tracking
 let unlockedCharacters = {
-  '👸': true,      // Default unlocked (queen emoji)
-  '🐱': true,     // Now unlocked by default
-  '🐰': true      // Now unlocked by default
+  '👸': true,
+  '🐱': true,
+  '🐰': true
 };
 
-// Add image preloading
 const characterImages = {
   '🐱': new Image(),
   '🐰': new Image(),
   '👸': new Image()
 };
 
-// Load character images with error handling
 characterImages['🐱'].onerror = function() {
   console.log('Failed to load Socks image, using emoji fallback');
 };
@@ -848,21 +836,20 @@ class GroundCover {
 
 // Modified player character
 const player = {
-  x: 120,                        // adjusted for larger screen
+  x: 120,
   y: GROUND_Y,
-  w: 64,                         // larger character
-  h: 64,                         // larger character
+  w: 64,
+  h: 64,
   vy: 0,
-  vx: 0,                         // horizontal velocity
+  vx: 0,
   jumping: false,
-  originalX: 120,                // store original x position
+  originalX: 120,
   character: '🐱',
   draw() {
     ctx.save();
     ctx.translate(this.x + this.w/2, this.y + this.h/2);
     
     if (this.character === '🐱') {
-      // Draw Socks image
       const img = characterImages['🐱'];
       if (img.complete && img.naturalWidth !== 0) {
         const imageSize = this.w * 1.5;
@@ -874,7 +861,6 @@ const player = {
         ctx.fillText('🐱', 0, 0);
       }
     } else if (this.character === '👸') {
-      // Draw ri image
       const img = characterImages['👸'];
       if (img.complete && img.naturalWidth !== 0) {
         const imageSize = this.w * 1.5;
@@ -886,7 +872,6 @@ const player = {
         ctx.fillText('👸', 0, 0);
       }
     } else if (this.character === '🐰') {
-      // Draw Ping image
       const img = characterImages['🐰'];
       if (img.complete && img.naturalWidth !== 0) {
         const imageSize = this.w * 1.5;
@@ -898,7 +883,6 @@ const player = {
         ctx.fillText('🐰', 0, 0);
       }
     } else {
-      // Draw other characters as emoji
       ctx.font = '64px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -912,13 +896,11 @@ const player = {
       this.vy += GRAVITY;
       this.y += this.vy;
       
-      // Apply moderate horizontal movement during jump
       if (this.vx > 0) {
         this.x += this.vx;
-        this.vx *= 0.9; // Slightly slower reduction of horizontal velocity
+        this.vx *= 0.9;
         
-        // Return to original position if moving too far
-        if (this.x > this.originalX + 40) { // Increased max distance (was 20)
+        if (this.x > this.originalX + 40) {
           this.x = this.originalX + 40;
           this.vx = 0;
         }
@@ -929,14 +911,14 @@ const player = {
         this.jumping = false;
         this.vy = 0;
         this.vx = 0;
-        this.x = this.originalX; // Reset to original position
+        this.x = this.originalX;
       }
     }
   },
   jump() {
     if(!this.jumping) {
       this.vy = JUMP_VEL;
-      this.vx = speed * 0.5; // Increased forward momentum (was 0.3)
+      this.vx = speed * 0.5;
       this.jumping = true;
     }
   }
@@ -1532,15 +1514,12 @@ function updateMenuCharacterSelects() {
     `;
   });
   
-  // Setup character selection after updating HTML
   setupCharacterSelection();
 }
 
-// Initialize menus and character selection
 updateMenuCharacterSelects();
 updateCharacterButtons();
 
-// Set initial character and selection
 const initialChar = '👸';
 document.querySelectorAll('.character-select').forEach(select => {
   const btn = select.querySelector(`[data-char="${initialChar}"]`);
@@ -1550,7 +1529,6 @@ document.querySelectorAll('.character-select').forEach(select => {
 });
 player.character = initialChar;
 
-// Simplified controls
 window.addEventListener('keydown', e => {
   if (gameStarted && !gameOver && e.code === 'Space') {
     e.preventDefault();
@@ -1564,16 +1542,12 @@ canvas.addEventListener('pointerdown', () => {
   }
 });
 
-// Show start menu initially
 document.getElementById('startMenu').classList.remove('hidden');
 
-// Update shell container style
 document.querySelector('#shell').style.maxWidth = '1400px';
 
-// Update score display style
 document.querySelector('#score').style.fontSize = '2rem';
 
-// Initialize background with enhanced elements
 const mountains = [];
 const particles = [];
 const hills = [];
@@ -1590,42 +1564,34 @@ function initBackground() {
   stars.length = 0;
   groundCover.length = 0;
   
-  // Create beautiful starry sky
   for (let i = 0; i < 80; i++) {
     stars.push(new Star());
   }
   
-  // Create mountains for background depth
   for (let i = 0; i < 3; i++) {
     mountains.push(new Mountain(canvas.width * (i / 3) + Math.random() * 200));
   }
   
-  // Create more prominent rolling hills
   for (let i = 0; i < 6; i++) {
     hills.push(new Hill(canvas.width * (i / 6) + Math.random() * 80));
   }
   
-  // Create ground cover to help ground trees
   for (let i = 0; i < 15; i++) {
     groundCover.push(new GroundCover(canvas.width * (i / 15) + Math.random() * 50));
   }
   
-  // Create trees with variety
   for (let i = 0; i < 7; i++) {
     trees.push(new Tree(canvas.width * (i / 7) + Math.random() * 100));
   }
   
-  // Create atmospheric clouds
   for (let i = 0; i < 4; i++) {
     clouds.push(new Cloud(canvas.width * (i / 4) + Math.random() * 200));
   }
 
-  // Create birds
   for (let i = 0; i < 3; i++) {
     birds.push(new Bird(canvas.width * (i / 3) + Math.random() * 300));
   }
   
-  // Create floating particles
   for (let i = 0; i < 20; i++) {
     particles.push(new Particle());
   }
