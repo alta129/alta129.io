@@ -183,9 +183,6 @@
     <h1>Queen Ri's Hive 🐝</h1>
     <canvas id="gameCanvas" width="1200" height="600"></canvas>
     <div id="score">🌸 Score: 0 | Evil Bees: 0/7</div>
-    <div class="controls">
-      <button id="muteBtn">🔊 Sound On</button>
-    </div>
     
     <div style="text-align: center; margin-top: 1rem; color: var(--txt); font-weight: 600;">
       <div>🌼 Daisy: 5pts (Fast) | 🌸 Wildflower: 8pts | 🌷 Tulip: 12pts | 🌹 Rose: 18pts | 🌻 Sunflower: 25pts (Slow)</div>
@@ -223,11 +220,9 @@ const scoreEl = document.getElementById('score');
 
 const bgMusic = document.getElementById('bgMusic');
 const bloomSound = document.getElementById('bloomSound');
-const muteBtn = document.getElementById('muteBtn');
 
 bgMusic.volume = 0.3;
 bloomSound.volume = 0.6;
-let isMuted = false;
 
 let frameId;
 let gameStarted = false;
@@ -558,10 +553,8 @@ class Flower {
     score += this.points;
     
     // Play pop sound
-    if (!isMuted) {
-      bloomSound.currentTime = 0;
-      bloomSound.play().catch(() => {});
-    }
+    bloomSound.currentTime = 0;
+    bloomSound.play().catch(() => {});
     
     // Create explosion particles
     for (let i = 0; i < 15; i++) {
@@ -896,10 +889,8 @@ function startGame() {
   last = performance.now();
   frameId = requestAnimationFrame(gameLoop);
   
-  if (!isMuted) {
-    bgMusic.currentTime = 0;
-    bgMusic.play().catch(() => {});
-  }
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(() => {});
 }
 
 document.getElementById('startGame').addEventListener('click', startGame);
@@ -920,13 +911,6 @@ window.addEventListener('keyup', e => {
     keys[e.code] = false;
     e.preventDefault();
   }
-});
-
-muteBtn.addEventListener('click', () => {
-  isMuted = !isMuted;
-  bgMusic.muted = isMuted;
-  bloomSound.muted = isMuted;
-  muteBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
 });
 
 // Show start menu
