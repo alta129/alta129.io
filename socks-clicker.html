@@ -275,7 +275,18 @@
     <h1>Ri Runner 🌲</h1>
     <canvas id="gameCanvas" width="1200" height="400"></canvas>
     <div id="score">0 m</div>
+    <div style="text-align: center; margin-top: 1rem;">
+      <button id="muteBtn" style="background: var(--accent); color: var(--txt-bright); border: 2px solid var(--accent-dark); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 600;">🔊 Sound On</button>
+    </div>
   </div>
+
+  <audio id="bgMusic" loop>
+    <source src="Clairo - Glory Of The Snow (Instrumental).mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="jumpSound" preload="auto">
+    <source src="cartoon-jump-6462.mp3" type="audio/mpeg">
+  </audio>
 
   <!-- Start Menu -->
   <div id="startMenu" class="menu">
@@ -323,6 +334,14 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx     = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
+
+const bgMusic = document.getElementById('bgMusic');
+const jumpSound = document.getElementById('jumpSound');
+const muteBtn = document.getElementById('muteBtn');
+
+bgMusic.volume = 0.3;
+jumpSound.volume = 0.5;
+let isMuted = false;
 
 const GROUND_Y   = 320;
 const GRAVITY    = 0.3;
@@ -920,6 +939,9 @@ const player = {
       this.vy = JUMP_VEL;
       this.vx = speed * 0.5;
       this.jumping = true;
+      
+      jumpSound.currentTime = 0;
+      jumpSound.play().catch(() => {});
     }
   }
 };
@@ -1218,32 +1240,40 @@ const OBSTACLE_TYPES = ['stump', 'log', 'rock', 'bush'];
 let lastObstacleType = null;
 
 function getSpawnInterval() {
-  // Base interval of 2000-4000ms, decreasing more aggressively with score
   const baseInterval = 2000 + Math.random() * 2000;
-  const scoreFactor = Math.max(0.3, 1 - (dist / 5000)); // Decrease interval up to 70% at 5000m (was 10000m)
+  const scoreFactor = Math.max(0.3, 1 - (dist / 5000));
   return baseInterval * scoreFactor;
 }
 
 function spawnObstacle() {
-  // Increased chance of spawning multiple obstacles based on score
-  const spawnMultiple = Math.random() < (dist / 10000); // Up to 50% chance at 10000m
+  const spawnMultiple = Math.random() < (dist / 10000);
   
   let availableTypes = OBSTACLE_TYPES.filter(type => type !== lastObstacleType);
   let type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
   lastObstacleType = type;
-  obstacles.push(new Obstacle(type));
   
-  // Chance to spawn a second obstacle
-  if (spawnMultiple && obstacles.length > 0) {
-    const lastObstacle = obstacles[obstacles.length - 1];
-    // Only spawn second obstacle if there's enough space
-    if (canvas.width - (lastObstacle.x + lastObstacle.w) > 300) {
-      let secondType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-      let secondObstacle = new Obstacle(secondType);
-      secondObstacle.x = lastObstacle.x + lastObstacle.w + 200 + Math.random() * 100;
-      obstacles.push(secondObstacle);
-    }
+  const obstacle = new Obstacle(type);
+  addMinorVariations(obstacle);
+  obstacles.push(obstacle);
+  
+  if (spawnMultiple && Math.random() < 0.3) {
+    const spacing = 300 + Math.random() * 200;
+    let secondType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+    let secondObstacle = new Obstacle(secondType);
+    secondObstacle.x = canvas.width + spacing;
+    addMinorVariations(secondObstacle);
+    obstacles.push(secondObstacle);
   }
+}
+
+function addMinorVariations(obstacle) {
+  const sizeVariation = 0.9 + Math.random() * 0.2;
+  obstacle.w *= sizeVariation;
+  obstacle.h *= sizeVariation;
+  
+  const heightOffset = Math.random() * 10 - 5;
+  obstacle.y += heightOffset;
+  obstacle.y = Math.max(GROUND_Y + player.h - obstacle.h, obstacle.y);
 }
 
 // score
@@ -1404,7 +1434,6 @@ function loop(now){
 }
 
 function start(){
-  // reset state
   speed = 4;
   dist = 0;
   obstacles.length = 0;
@@ -1414,11 +1443,14 @@ function start(){
   player.jumping = false;
   gameStarted = true;
   gameOver = false;
-  initBackground(); // Initialize background elements
+  initBackground();
   document.getElementById('startMenu').classList.add('hidden');
   document.getElementById('deathMenu').classList.add('hidden');
   last = performance.now();
   frameId = requestAnimationFrame(loop);
+  
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(() => {});
 }
 
 function showDeathMenu() {
@@ -1434,6 +1466,8 @@ function showDeathMenu() {
   document.getElementById('highScore').textContent = `High Score: ${highScore} m`;
   
   document.getElementById('deathMenu').classList.remove('hidden');
+  
+  bgMusic.pause();
 }
 
 // Menu event listeners
@@ -1596,6 +1630,13 @@ function initBackground() {
     particles.push(new Particle());
   }
 }
+
+muteBtn.addEventListener('click', () => {
+  isMuted = !isMuted;
+  bgMusic.muted = isMuted;
+  jumpSound.muted = isMuted;
+  muteBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+});
 </script>
 </body>
 </html>
