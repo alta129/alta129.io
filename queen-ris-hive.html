@@ -219,8 +219,44 @@ const scoreEl = document.getElementById('score');
 const bgMusic = document.getElementById('bgMusic');
 const bloomSound = document.getElementById('bloomSound');
 
-bgMusic.volume = 0.3;
-bloomSound.volume = 0.6;
+// Add audio controls
+let isMuted = false;
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+function setupAudio() {
+  bgMusic.volume = 0.3;
+  bloomSound.volume = 0.6;
+  
+  // Add mute button to menu
+  const menuContent = document.querySelector('.menu-content');
+  const muteBtn = document.createElement('button');
+  muteBtn.className = 'menu-btn';
+  muteBtn.style.marginTop = '1rem';
+  muteBtn.textContent = '🔊 Sound On';
+  muteBtn.onclick = toggleMute;
+  menuContent.appendChild(muteBtn);
+  
+  // Add audio context resume on user interaction
+  document.addEventListener('click', () => {
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+  }, { once: true });
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  bgMusic.muted = isMuted;
+  bloomSound.muted = isMuted;
+  this.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+}
+
+function playSound(sound) {
+  if (!isMuted && audioContext.state === 'running') {
+    sound.currentTime = 0;
+    sound.play().catch(err => console.log('Sound play error:', err));
+  }
+}
 
 let frameId;
 let gameStarted = false;
@@ -550,9 +586,8 @@ class Flower {
     // Award points based on flower type
     score += this.points;
     
-    // Play pop sound
-    bloomSound.currentTime = 0;
-    bloomSound.play().catch(() => {});
+    // Play pop sound with new function
+    playSound(bloomSound);
     
     // Create explosion particles
     for (let i = 0; i < 15; i++) {
@@ -882,8 +917,11 @@ function startGame() {
   last = performance.now();
   frameId = requestAnimationFrame(gameLoop);
   
-  bgMusic.currentTime = 0;
-  bgMusic.play().catch(() => {});
+  // Play music with better error handling
+  if (audioContext.state === 'running') {
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(err => console.log('Music play error:', err));
+  }
 }
 
 document.getElementById('startGame').addEventListener('click', startGame);
@@ -1144,6 +1182,9 @@ function drawBackground() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 }
+
+// Call setupAudio when the page loads
+document.addEventListener('DOMContentLoaded', setupAudio);
 </script>
 </body>
 </html> 
