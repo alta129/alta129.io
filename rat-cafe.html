@@ -713,12 +713,6 @@
     // Add experimental drink combinations
     const EXPERIMENTAL_DRINKS = [
       {
-        name: "Triple Shot",
-        ingredients: ['espresso', 'espresso', 'espresso'],
-        price: 5.50,
-        time: 35
-      },
-      {
         name: "Chocolate Chai",
         ingredients: ['steamedMilk', 'chocolate', 'chai'],  // Changed order
         price: 5.75,
@@ -1060,11 +1054,12 @@
           element.classList.add('selected');
         }
       } else {
-        // For coffee, allow multiple ingredients
+        // For coffee, allow multiple ingredients but prevent duplicates
         if (selectedIngredients.has(id)) {
           selectedIngredients.delete(id);
           element.classList.remove('selected');
         } else {
+          // Don't allow multiple of the same ingredient
           selectedIngredients.add(id);
           element.classList.add('selected');
         }
