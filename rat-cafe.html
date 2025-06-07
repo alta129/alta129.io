@@ -894,12 +894,12 @@
         return 2 + (day - 1);
       },
       getCustomerSpawnRate: (day) => {
-        // Start slower on day 1 (8s), decrease by 500ms each day, minimum 3s
-        return Math.max(3000, 8000 - ((day - 1) * 500));
+        // Start faster on day 1 (5s), decrease by 400ms each day, minimum 1.2s
+        return Math.max(1200, 5000 - ((day - 1) * 400));
       },
       getMaxCustomers: (day) => {
-        // Start with 2 max customers, increase by 1 every 2 days
-        return 2 + Math.floor((day - 1) / 2);
+        // Start with 2 max customers, increase by 1 every day
+        return 2 + (day - 1);
       },
       getCustomerPatience: (day, basePatience) => {
         // Start with extra patience on day 1, gradually reduce
@@ -1760,7 +1760,7 @@
       dayProgress = 0;
       dayCustomersServed = 0;
       
-      // Update day settings
+      // Restore day goal logic
       dayGoal = DAY_SETTINGS.getDayGoal(day);
       dayCustomerSpawnRate = DAY_SETTINGS.getCustomerSpawnRate(day);
       dayMaxCustomers = DAY_SETTINGS.getMaxCustomers(day);
@@ -1778,7 +1778,7 @@
         clearInterval(customerSpawnInterval);
       }
       customerSpawnInterval = setInterval(() => {
-        if (customers.length < dayMaxCustomers && Math.random() < 0.4) {
+        if (customers.length < dayMaxCustomers && Math.random() < 0.7) {
           createCustomer();
         }
       }, dayCustomerSpawnRate);
@@ -1794,6 +1794,7 @@
     }
 
     function updateDayInfo() {
+      // Show current day and customers served out of goal
       const dayInfo = document.getElementById('dayInfo');
       if (!dayInfo) {
         const gameInfo = document.querySelector('.game-info');
@@ -2265,6 +2266,10 @@
             customer.order.secondSnack.served = true;
           }
         }
+
+        // Patience boost: increase currentPatience by 10% of original patience, up to max
+        const patienceBoost = Math.floor(customer.patience * 0.10);
+        customer.currentPatience = Math.min(customer.currentPatience + patienceBoost, customer.patience);
       } else {
         // Apply rating penalty for wrong order
         const wrongOrderPenalty = 0.3;
