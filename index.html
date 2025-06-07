@@ -4,75 +4,115 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>For RIRIBABY 🌲</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Open+Sans&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: #2F4F2F;
+      background: linear-gradient(135deg, #2F4F2F 0%, #6B8E3D 100%);
       background-size: cover;
       font-family: 'Open Sans', sans-serif;
       color: #eaf5ea;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
-
-    #forest-audio {
-      display: none;
+    .forest-deco {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      width: 100vw;
+      height: 180px;
+      background: url('forest-deco-top.png') repeat-x bottom left;
+      background-size: contain;
+      z-index: 1;
+      pointer-events: none;
     }
-
+    .sparkles {
+      position: absolute;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 2;
+    }
     .container {
-      max-width: 800px;
-      margin: 8vh auto;
-      padding: 2.5rem;
-      background-color: rgba(27, 44, 33, 0.85);
-      border-radius: 15px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.4);
-      backdrop-filter: blur(5px);
+      max-width: 1100px;
+      margin: 10vh auto 0 auto;
+      padding: 2.5rem 2rem 2rem 2rem;
+      background: rgba(27, 44, 33, 0.92);
+      border-radius: 18px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+      border: 3px solid #6B8E3D;
+      position: relative;
+      z-index: 10;
+      text-align: center;
     }
-
     h1 {
       font-family: 'Playfair Display', serif;
       font-size: 2.8rem;
       margin-bottom: 0.5rem;
       color: #c6ffcf;
       text-shadow: 1px 1px 2px #000;
+      letter-spacing: 1px;
     }
-
-    .intro {
-      font-style: italic;
-      color: #aee9c6;
-      margin-bottom: 2rem;
-    }
-
-    .letter p {
-      margin: 1.5rem 0;
-      font-size: 1.15rem;
-    }
-
-    .signoff {
-      margin-top: 2rem;
+    .letter-link {
+      display: inline-block;
+      margin: 2.5rem auto 2.5rem auto;
+      padding: 1.2rem 2.5rem;
+      background: #fffbe6;
+      color: #4A3520;
       font-family: 'Playfair Display', serif;
       font-size: 1.3rem;
-      color: #d1ffd1;
+      font-weight: 700;
+      border-radius: 18px;
+      border: 2.5px dashed #bfa76a;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+      text-decoration: none;
+      letter-spacing: 1.5px;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      position: relative;
     }
-
+    .letter-link:hover {
+      background: #f7e7b6;
+      color: #8B6914;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
     .mini-links {
-      margin-top: 2rem;
+      margin-top: 2.5rem;
       display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
+      flex-wrap: nowrap;
+      gap: 2.2rem;
+      justify-content: center;
     }
-
     .mini-links a {
       background: #355c4d;
-      padding: 0.75rem 1.2rem;
-      border-radius: 8px;
+      padding: 1.1rem 2.2rem;
+      border-radius: 12px;
       text-decoration: none;
       color: #eaffea;
-      transition: background 0.3s ease;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      border: 2px solid #6B8E3D;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
     }
-
     .mini-links a:hover {
       background: #4d7860;
+      color: #fffbe6;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+    @media (max-width: 1200px) {
+      .container { max-width: 98vw; }
+      .mini-links { gap: 1.1rem; }
+    }
+    @media (max-width: 800px) {
+      .container { padding: 1.2rem 0.5rem; max-width: 100vw; }
+      h1 { font-size: 2rem; }
+      .mini-links { flex-wrap: wrap; gap: 0.7rem; }
+      .mini-links a { font-size: 1.05rem; padding: 0.8rem 1.2rem; }
     }
   </style>
 </head>
@@ -80,39 +120,54 @@
   <audio autoplay loop id="forest-audio">
     <source src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_9823b67419.mp3?filename=forest-nature-ambience-9732.mp3" type="audio/mpeg">
   </audio>
-
+  <div class="forest-deco"></div>
+  <canvas class="sparkles"></canvas>
   <div class="container">
     <h1>For RIRIBABY 💚</h1>
-    <p class="intro">a forest clearing where my thoughts live when i think of you</p>
-
-    <div class="letter">
-      <p>ri i wanted to write you this because it's our first anniversary not together, and i felt the need to look back at some of my favorite moments with you sweetie. this is gonna be like a brain dump of feels.</p>
-
-      <p>march 8th, 2025, 2:02 am. that selfie from the bar. it's wild to think what we were cooking up without knowing how much it would mean later. i was nervous as hell — but underneath that i just knew you were someone special. you weren't just stunning (and you are), you made me feel like maybe, just maybe, i was worth saying yes to. and when you did, i was literally GEEKING. you wanted to date me. ME. you always made me feel like i was enough, just like i am.</p>
-
-      <p>fast forward 4 days and i'm next to you on the deck, you in that sexy bi fit, trinkets glittering, us still feeling out the rhythm. i was nervous to even flirt, scared to mess up something that felt so good. but you laughed, and suddenly the nerves felt okay. every time you laughed, it was like the world reminded me i was in the right place.</p>
-
-      <p>spring break was kinda long-distance-y but still, just talking to you was like breathin. nothing fancy. just real. you make me feel seen even when we're apart. it's not just your looks — it's how you listen, how you care, how you somehow make everything calm down.</p>
-
-      <p>then: sushi, trivia, garden shenanigans — and you trying raw sushi like a CHAMP. it's such a small thing but it's so YOU — you're open, curious, honest. and even when i sneak pics of you being a lil eepy goblin you still look like you walked out of a photoshoot. you make doing nothing feel like everything.</p>
-
-      <p>mirror pics??? you own those. like no matter what we're wearing or doing, you bring the vibes. and the way you charm every single car? unbelievable. socks LOVES you. you're like the squirrel-whisperer but for 4-wheeled creatures.</p>
-
-      <p>the hive. the HIVE. you showed me your space and let me be part of it and take the silliest pics and wear your sunglasses and god, i felt like the luckiest ever.</p>
-
-      <p>april 25th: the rain, the garage, the pics, the vibes. you were carrying and carrying ME emotionally and i was soaking it up. april 26: jbrekk, your makeup, your fit, your energy. i still don't know how the hell i get to be your person. concerts with you = heaven. i'd sway forever.</p>
-
-      <p>april 29: me in the full ri hands fit, channeling ur power. may 1: moving day sadness, but even that felt sweet 'cause it meant we had something real enough to miss. time with you is never wasted. it's like little diamonds in the dirt — i wanna collect 'em all and hold onto them always.</p>
-
-      <p class="signoff">— your forest goblin<br/>[you]</p>
-    </div>
-
+    <a class="letter-link" href="letter.html">💌 Read the Letter</a>
     <div class="mini-links">
       <a href="socks-clicker.html">🐾 Ri Runner</a>
-      <a href="mirror-selfie-memory.html">MemoRIes</a>
+      <a href="mirror-selfie-memory.html">🪞 MemoRIes</a>
       <a href="rat-cafe.html">🐀 Ri's Rat Cafe</a>
       <a href="queen-ris-hive.html">🐝 Queen Ri's Hive</a>
     </div>
   </div>
+  <script>
+    // Sparkle effect for magic
+    const canvas = document.querySelector('.sparkles');
+    const ctx = canvas.getContext('2d');
+    function resizeSparkles() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeSparkles);
+    resizeSparkles();
+    const sparkles = Array.from({length: 40}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: 0.7 + Math.random() * 1.7,
+      a: Math.random() * Math.PI * 2,
+      s: 0.5 + Math.random() * 1.5,
+      t: Math.random() * 1000
+    }));
+    function drawSparkles() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for (const s of sparkles) {
+        s.t += 1;
+        const pulse = Math.sin(s.t * 0.04 + s.a) * 0.5 + 0.5;
+        ctx.globalAlpha = 0.18 + 0.5 * pulse;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * (1 + 0.5 * pulse), 0, Math.PI * 2);
+        ctx.fillStyle = '#fffbe6';
+        ctx.shadowColor = '#fffbe6';
+        ctx.shadowBlur = 8 + 8 * pulse;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(drawSparkles);
+    }
+    drawSparkles();
+  </script>
 </body>
 </html>

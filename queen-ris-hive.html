@@ -226,16 +226,6 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 function setupAudio() {
   bgMusic.volume = 0.3;
   bloomSound.volume = 0.6;
-  
-  // Add mute button to menu
-  const menuContent = document.querySelector('.menu-content');
-  const muteBtn = document.createElement('button');
-  muteBtn.className = 'menu-btn';
-  muteBtn.style.marginTop = '1rem';
-  muteBtn.textContent = '🔊 Sound On';
-  muteBtn.onclick = toggleMute;
-  menuContent.appendChild(muteBtn);
-  
   // Add audio context resume on user interaction
   document.addEventListener('click', () => {
     if (audioContext.state === 'suspended') {
@@ -830,6 +820,10 @@ function drawGameOver() {
   
   ctx.font = '24px Arial';
   ctx.fillText('Press R to restart', canvas.width/2, canvas.height/2 + 50);
+  
+  // Hide sound button
+  const soundBtn = document.getElementById('soundToggleBtn');
+  if (soundBtn) soundBtn.style.display = 'none';
 }
 
 function updateScore() {
@@ -914,14 +908,43 @@ function startGame() {
   queenBee.trailParticles = [];
   
   document.getElementById('startMenu').classList.add('hidden');
+  // Show sound button
+  let soundBtn = document.getElementById('soundToggleBtn');
+  if (!soundBtn) {
+    soundBtn = document.createElement('button');
+    soundBtn.id = 'soundToggleBtn';
+    soundBtn.style.position = 'fixed';
+    soundBtn.style.top = '30px';
+    soundBtn.style.left = '30px';
+    soundBtn.style.zIndex = '1300';
+    soundBtn.style.background = '#fffbe6';
+    soundBtn.style.color = '#6B8E3D';
+    soundBtn.style.border = '2px dashed #bfa76a';
+    soundBtn.style.borderRadius = '8px';
+    soundBtn.style.padding = '0.5rem 1.2rem';
+    soundBtn.style.fontFamily = "'Playfair Display', serif";
+    soundBtn.style.fontSize = '1.1rem';
+    soundBtn.style.fontWeight = '700';
+    soundBtn.style.cursor = 'pointer';
+    soundBtn.style.boxShadow = '2px 4px 12px rgba(0,0,0,0.13)';
+    soundBtn.textContent = '🔊 Sound On';
+    soundBtn.style.display = 'none';
+    document.body.appendChild(soundBtn);
+    let isMuted = false;
+    soundBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      bgMusic.muted = isMuted;
+      bloomSound.muted = isMuted;
+      soundBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+    });
+  }
+  soundBtn.style.display = 'block';
   last = performance.now();
   frameId = requestAnimationFrame(gameLoop);
   
   // Play music with better error handling
-  if (audioContext.state === 'running') {
-    bgMusic.currentTime = 0;
-    bgMusic.play().catch(err => console.log('Music play error:', err));
-  }
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(err => console.log('Music play error:', err));
 }
 
 document.getElementById('startGame').addEventListener('click', startGame);
@@ -1185,6 +1208,40 @@ function drawBackground() {
 
 // Call setupAudio when the page loads
 document.addEventListener('DOMContentLoaded', setupAudio);
+
+// On DOMContentLoaded, ensure the button is hidden if present
+window.addEventListener('DOMContentLoaded', () => {
+  let soundBtn = document.getElementById('soundToggleBtn');
+  if (!soundBtn) {
+    soundBtn = document.createElement('button');
+    soundBtn.id = 'soundToggleBtn';
+    soundBtn.style.position = 'fixed';
+    soundBtn.style.top = '30px';
+    soundBtn.style.left = '30px';
+    soundBtn.style.zIndex = '1300';
+    soundBtn.style.background = '#fffbe6';
+    soundBtn.style.color = '#6B8E3D';
+    soundBtn.style.border = '2px dashed #bfa76a';
+    soundBtn.style.borderRadius = '8px';
+    soundBtn.style.padding = '0.5rem 1.2rem';
+    soundBtn.style.fontFamily = "'Playfair Display', serif";
+    soundBtn.style.fontSize = '1.1rem';
+    soundBtn.style.fontWeight = '700';
+    soundBtn.style.cursor = 'pointer';
+    soundBtn.style.boxShadow = '2px 4px 12px rgba(0,0,0,0.13)';
+    soundBtn.textContent = '🔊 Sound On';
+    soundBtn.style.display = 'none';
+    document.body.appendChild(soundBtn);
+    let isMuted = false;
+    soundBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      bgMusic.muted = isMuted;
+      bloomSound.muted = isMuted;
+      soundBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+    });
+  }
+  soundBtn.style.display = 'none';
+});
 </script>
 </body>
 </html> 

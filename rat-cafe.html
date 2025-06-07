@@ -649,8 +649,22 @@
   </div>
 
   <audio id="bgMusic" loop>
-    <source src="Alvvays - Ones Who Love You.mp3" type="audio/mpeg">
+    <source src="Dominic Fike - Pasture Child (Official Audio).mp3" type="audio/mpeg">
   </audio>
+
+  <div id="recipeSheetBtn" style="position: fixed; top: 30px; right: 30px; z-index: 1200; cursor: pointer; background: none; border: none; outline: none;">
+    <span style="font-family: 'Playfair Display', serif; font-size: 1.3rem; background: #fffbe6; color: #6B4F1D; border: 2px dashed #bfa76a; border-radius: 8px; padding: 0.5rem 1.2rem; box-shadow: 2px 4px 12px rgba(0,0,0,0.18); font-weight: 700; letter-spacing: 1px;">📌 RIcipes</span>
+  </div>
+  <div id="recipeSheetOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(60,40,20,0.18); z-index: 2000;">
+    <div id="recipeSheetPaper" style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%) rotate(-2deg); min-width: 340px; max-width: 90vw; background: #fffbe6; border: 3px dashed #bfa76a; border-radius: 0 0 40px 30px/0 0 60px 50px; box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 8px #f7e7b6 inset; padding: 1.2rem 2.5rem 1.5rem 2.5rem; font-family: 'Playfair Display', serif; color: #6B4F1D; font-size: 1.1rem; line-height: 1.7; cursor: pointer; user-select: none; border-top: 0;">
+      <div style="position: absolute; top: -32px; left: 50%; transform: translateX(-50%); font-size: 2.2rem;">📌</div>
+      <div style="font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 700; text-align: center; margin-bottom: 0.7rem; letter-spacing: 2px; text-shadow: 1px 1px 0 #f7e7b6;">RIcipes</div>
+      <div id="recipeSheetContent" style="font-family: 'Nunito', cursive; font-size: 1.1rem; white-space: pre-line;"></div>
+      <div style="text-align: center; margin-top: 1.2rem; font-size: 0.95rem; color: #bfa76a; font-style: italic;">(Click anywhere to close)</div>
+    </div>
+  </div>
+
+  <button id="soundToggleBtn" style="position: fixed; top: 30px; left: 30px; z-index: 1300; background: #fffbe6; color: #6B4F1D; border: 2px dashed #bfa76a; border-radius: 8px; padding: 0.5rem 1.2rem; font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 2px 4px 12px rgba(0,0,0,0.13);">🔊 Sound On</button>
 
   <script>
     // Game state
@@ -1481,11 +1495,20 @@
 
     // Initialize game on page load
     document.addEventListener('DOMContentLoaded', () => {
-      // Show start menu initially
       document.getElementById('startMenu').classList.remove('hidden');
-      
-      // Add click handler for start button
       document.getElementById('startGameBtn').addEventListener('click', startNewGame);
+      // Sound toggle button
+      const soundBtn = document.getElementById('soundToggleBtn');
+      if (soundBtn && bgMusic) {
+        let isMuted = false;
+        soundBtn.addEventListener('click', () => {
+          isMuted = !isMuted;
+          bgMusic.muted = isMuted;
+          soundBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+        });
+        // Always hide sound button on start
+        soundBtn.style.display = 'none';
+      }
     });
 
     function startNewGame() {
@@ -1512,6 +1535,10 @@
       
       // Initialize preparation stations
       initializePreparationStations();
+      
+      // Show sound button only during gameplay
+      const soundBtn = document.getElementById('soundToggleBtn');
+      if (soundBtn) soundBtn.style.display = 'block';
     }
 
     function updateGameInfo() {
@@ -1557,6 +1584,10 @@
         gameOverScreen.remove();
         startNewGame();
       });
+      
+      // Hide sound button on game over
+      const soundBtn = document.getElementById('soundToggleBtn');
+      if (soundBtn) soundBtn.style.display = 'none';
     }
 
     function completeDay() {
@@ -1614,6 +1645,10 @@
         completionScreen.remove();
         startNewDay();
       });
+      
+      // Hide sound button on day complete
+      const soundBtn = document.getElementById('soundToggleBtn');
+      if (soundBtn) soundBtn.style.display = 'none';
     }
 
     // Add this helper function near the top with other utility functions
@@ -2376,6 +2411,45 @@
         setTimeout(() => message.remove(), 500);
       }, 2000);
     }
+
+    function getRecipeSheetText() {
+      let text = '';
+      text += 'Drinks:\n';
+      for (const drink of MENU_ITEMS.drinks) {
+        text += `- ${drink.name}: ${drink.ingredients.map(i => COFFEE_INGREDIENTS[i]?.name || i).join(', ')}\n`;
+      }
+      text += '\nSnacks:\n';
+      for (const snack of MENU_ITEMS.snacks) {
+        text += `- ${snack.name}: ${snack.ingredients.map(i => SNACK_INGREDIENTS[i]?.name || i).join(', ')}\n`;
+      }
+      text += '\nExperimental Drinks:\n';
+      for (const drink of EXPERIMENTAL_DRINKS) {
+        text += `- ${drink.name}: ${drink.ingredients.map(i => COFFEE_INGREDIENTS[i]?.name || i).join(', ')}\n`;
+      }
+      return text;
+    }
+
+    // Add event listeners for recipe sheet
+    window.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('recipeSheetBtn');
+      const overlay = document.getElementById('recipeSheetOverlay');
+      const paper = document.getElementById('recipeSheetPaper');
+      const content = document.getElementById('recipeSheetContent');
+      if (btn && overlay && paper && content) {
+        btn.addEventListener('click', () => {
+          content.textContent = getRecipeSheetText();
+          overlay.style.display = 'block';
+          overlay.style.background = 'rgba(60,40,20,0.18)'; // Reset overlay background
+        });
+        overlay.addEventListener('click', () => {
+          overlay.style.display = 'none';
+          overlay.style.background = 'rgba(60,40,20,0.18)'; // Ensure background is reset
+        });
+        paper.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+    });
   </script>
 </body>
 </html> 

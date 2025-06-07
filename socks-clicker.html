@@ -276,9 +276,6 @@
     <div id="gameContainer">
       <canvas id="gameCanvas" width="1200" height="400"></canvas>
       <div id="score">0 m</div>
-      <div style="text-align: center; margin-top: 1rem;">
-        <button id="muteBtn" style="background: var(--accent); color: var(--txt-bright); border: 2px solid var(--accent-dark); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 600;">🔊 Sound On</button>
-      </div>
     </div>
   </div>
 
@@ -1454,6 +1451,37 @@ function start(){
   initBackground();
   document.getElementById('startMenu').classList.add('hidden');
   document.getElementById('deathMenu').classList.add('hidden');
+  // Show sound button
+  let soundBtn = document.getElementById('soundToggleBtn');
+  if (!soundBtn) {
+    soundBtn = document.createElement('button');
+    soundBtn.id = 'soundToggleBtn';
+    soundBtn.style.position = 'fixed';
+    soundBtn.style.top = '30px';
+    soundBtn.style.left = '30px';
+    soundBtn.style.zIndex = '1300';
+    soundBtn.style.background = '#eaf5ea';
+    soundBtn.style.color = '#355c4d';
+    soundBtn.style.border = '2px dashed #4a7a5a';
+    soundBtn.style.borderRadius = '8px';
+    soundBtn.style.padding = '0.5rem 1.2rem';
+    soundBtn.style.fontFamily = "'Playfair Display', serif";
+    soundBtn.style.fontSize = '1.1rem';
+    soundBtn.style.fontWeight = '700';
+    soundBtn.style.cursor = 'pointer';
+    soundBtn.style.boxShadow = '2px 4px 12px rgba(0,0,0,0.13)';
+    soundBtn.textContent = '🔊 Sound On';
+    soundBtn.style.display = 'none';
+    document.body.appendChild(soundBtn);
+    let isMuted = false;
+    soundBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      bgMusic.muted = isMuted;
+      jumpSound.muted = isMuted;
+      soundBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+    });
+  }
+  soundBtn.style.display = 'block';
   last = performance.now();
   frameId = requestAnimationFrame(loop);
   
@@ -1476,6 +1504,9 @@ function showDeathMenu() {
   document.getElementById('deathMenu').classList.remove('hidden');
   
   bgMusic.pause();
+  // Hide sound button
+  const soundBtn = document.getElementById('soundToggleBtn');
+  if (soundBtn) soundBtn.style.display = 'none';
 }
 
 // Menu event listeners
@@ -1644,6 +1675,12 @@ muteBtn.addEventListener('click', () => {
   bgMusic.muted = isMuted;
   jumpSound.muted = isMuted;
   muteBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Sound toggle button
+  let soundBtn = document.getElementById('soundToggleBtn');
+  if (soundBtn) soundBtn.style.display = 'none';
 });
 </script>
 </body>

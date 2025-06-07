@@ -361,6 +361,8 @@
     </div>
   </div>
 
+  <button id="soundToggleBtn" style="position: fixed; top: 30px; left: 30px; z-index: 1300; background: #fffbe6; color: #6B8E3D; border: 2px dashed #bfa76a; border-radius: 8px; padding: 0.5rem 1.2rem; font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 2px 4px 12px rgba(0,0,0,0.13);">🔊 Sound On</button>
+
   <audio id="bgMusic" loop>
     <source src="Alvvays - Ones Who Love You.mp3" type="audio/mpeg">
   </audio>
@@ -441,9 +443,38 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Show start menu initially
       document.getElementById('startMenu').classList.remove('hidden');
-      
-      // Add click handler for start button
       document.getElementById('startGameBtn').addEventListener('click', startNewGame);
+      // Sound toggle button
+      let soundBtn = document.getElementById('soundToggleBtn');
+      if (!soundBtn) {
+        soundBtn = document.createElement('button');
+        soundBtn.id = 'soundToggleBtn';
+        soundBtn.style.position = 'fixed';
+        soundBtn.style.top = '30px';
+        soundBtn.style.left = '30px';
+        soundBtn.style.zIndex = '1300';
+        soundBtn.style.background = '#fffbe6';
+        soundBtn.style.color = '#6B8E3D';
+        soundBtn.style.border = '2px dashed #bfa76a';
+        soundBtn.style.borderRadius = '8px';
+        soundBtn.style.padding = '0.5rem 1.2rem';
+        soundBtn.style.fontFamily = "'Playfair Display', serif";
+        soundBtn.style.fontSize = '1.1rem';
+        soundBtn.style.fontWeight = '700';
+        soundBtn.style.cursor = 'pointer';
+        soundBtn.style.boxShadow = '2px 4px 12px rgba(0,0,0,0.13)';
+        soundBtn.textContent = '🔊 Sound On';
+        soundBtn.style.display = 'none';
+        document.body.appendChild(soundBtn);
+      }
+      let isMuted = false;
+      soundBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        bgMusic.muted = isMuted;
+        soundBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+      });
+      // Always hide sound button on start
+      soundBtn.style.display = 'none';
     });
 
     function startNewGame() {
@@ -473,6 +504,10 @@
       
       // Create new game grid
       createGameGrid();
+
+      // Show sound button only during gameplay
+      const soundBtn = document.getElementById('soundToggleBtn');
+      if (soundBtn) soundBtn.style.display = 'block';
     }
 
     function flipCard(card) {
@@ -554,6 +589,10 @@
       document.getElementById('finalTime').textContent = 
         document.getElementById('timeCount').textContent;
       document.getElementById('victoryScreen').classList.remove('hidden');
+
+      // Hide sound button on victory
+      const soundBtn = document.getElementById('soundToggleBtn');
+      if (soundBtn) soundBtn.style.display = 'none';
     }
 
     function resetGame() {
@@ -571,6 +610,10 @@
       document.getElementById('pairCount').textContent = '0';
       document.getElementById('victoryScreen').classList.add('hidden');
       document.getElementById('startMenu').classList.remove('hidden');
+
+      // Hide sound button on reset/start menu
+      const soundBtn = document.getElementById('soundToggleBtn');
+      if (soundBtn) soundBtn.style.display = 'none';
     }
   </script>
 </body>
